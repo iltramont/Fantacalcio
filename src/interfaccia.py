@@ -12,15 +12,15 @@ class Interfaccia:
         return nome_fanta_allenatore, nome_squadra
 
 
-    def seleziona_comando(self, scelte: list[str], intestazione="") -> int:
+    def seleziona_comando(self, scelte: list[str], titolo: str = "") -> int:
         comandi_validi = [str(i) for i in range(1, len(scelte) + 1)]
         result = None
         go = True
         while go:
-            print(intestazione)
-            print("Selezionare operazione")
+            utils.stampa_intestazione(titolo)
+            print("*--- Selezionare operazione")
             utils.stampa_elenco_scelte(scelte)
-            comando = input("Comando:")
+            comando = input("*--- Comando:").strip()
             if comando in comandi_validi:
                 result = int(comando)
                 go = False
@@ -30,15 +30,28 @@ class Interfaccia:
 
 
     def home(self):
-        intestazione = "*----------------------*" \
-                       "*--- SCHERMATA HOME ---*" \
-                       "*----------------------*"
+        titolo = "SCHERMATA HOME"
         scelte = [
             "Visualizza tornei",
             "Gestisci tornei",
             "Esci"
         ]
-        scelta = self.seleziona_comando(scelte, intestazione)
-        print("comando scelto:", scelta)
+        comando = self.seleziona_comando(scelte, titolo)
+        if comando == 1:
+            self.visualizza_tornei()
+        elif comando == 2:
+            self.gestisci_tornei()
+        else:
+            self.esci()
 
 
+    def esci(self):
+        pass
+
+
+    def visualizza_tornei(self):
+        pass
+
+
+    def gestisci_tornei(self):
+        pass
