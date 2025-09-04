@@ -17,7 +17,7 @@ class Interfaccia:
         result = None
         go = True
         while go:
-            utils.stampa_intestazione(titolo)
+            utils.stampa_titolo(titolo)
             print("*--- Selezionare operazione")
             utils.stampa_elenco_scelte(scelte)
             comando = input("*--- Comando:").strip()

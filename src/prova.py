@@ -1,8 +1,10 @@
 import utils
+from finestre import *
 
 def main():
-    data = utils.read_players()
-    print(data)
+    home = Home()
+    home.execute()
+
 
 if __name__ == "__main__":
     main()
