@@ -17,6 +17,7 @@ def stampa_titolo(titolo: str, larghezza: int = 100, allineamento: str = '^'):
     if titolo is None:
         s = '*---' + (larghezza - 8)*'-' + '---*'
     else:
+        titolo = ' ' + titolo + ' '
         s = f"*---{titolo:-{allineamento}{larghezza-8}}---*"
     print(s)
 

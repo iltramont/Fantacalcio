@@ -63,7 +63,6 @@ class Home(Finestra):
             next_window.execute()
 
 
-
 class GestisciCampionati(Finestra):
     def __init__(self):
         super().__init__()
@@ -75,10 +74,12 @@ class GestisciCampionati(Finestra):
         }
 
     def agisci(self, comando: str):
-        if comando == '2':
+        if comando == '1':
+            next_window = VisualizzaCampionati()
+            next_window.execute()
+        elif comando == '2':
             next_window = CreaNuovoCampionato()
             next_window.execute()
-
 
 
 class CreaNuovoCampionato(Finestra):
@@ -86,29 +87,57 @@ class CreaNuovoCampionato(Finestra):
         super().__init__()
         self.titolo = 'CREA NUOVO CAMPIONATO'
         self.__nome_file_campionati = 'campionati.xlsx'
-        self.df_campionati = pd.DataFrame()
 
     def crea_campionato(self, nome_campionato: str):
         data_creazione = pd.Timestamp.now()
         new_record = pd.DataFrame({
-            'Campionato': [nome_campionato],
-            'Data creazione': [data_creazione.strftime("%d/%m/%Y")],
-            'Ora Creazione': [data_creazione.strftime("%H:%M:%S")],
+            'campionato': [nome_campionato],
+            'data_creazione': [data_creazione]
         })
         df = utils.leggi_file_excel(self.__nome_file_campionati)
         df_campionati = pd.concat([df, new_record], ignore_index=True)
         utils.salva_file_excel(df_campionati, self.__nome_file_campionati)
-        self.df_campionati = df_campionati
-
 
     def execute(self):
+        utils.stampa_titolo(self.titolo)
         nome_campionato = utils.chiedi_stringa('Nome Campionato')
         print(f'*--- Creazione campionato "{nome_campionato}" in corso...')
         conferma: bool = utils.conferma()
         if conferma:
             self.crea_campionato(nome_campionato)
-            print(f'*--- Campionato {nome_campionato} creato con successo.')
-            print('*--- Elenco campionati:')
-            print(self.df_campionati)
+            print(f'*--- Campionato "{nome_campionato}" creato con successo.')
         else:
             print("Creazione campionato annullata")
+
+
+class VisualizzaCampionati(Finestra):
+    def __init__(self):
+        super().__init__()
+        self.titolo = 'VISUALIZZA CAMPIONATI'
+        self.__nome_file_campionati = 'campionati.xlsx'
+        self.df_campionati = pd.DataFrame()
+        self.comando_chiusura = 'E'
+        self.comandi = {
+            '1': 'Gestisci Campionato',
+            '2': 'Elimina campionato',
+            self.comando_chiusura: 'Esci'
+        }
+
+    def execute(self):
+        utils.stampa_titolo(self.titolo)
+        self.df_campionati = utils.leggi_file_excel(self.__nome_file_campionati)
+        df = self.df_campionati.copy()
+        if not df.empty:
+            utils.stampa_titolo('LISTA CAMPIONATI', allineamento='<')
+            df['Nome'] = df['campionato']
+            df['Data creazione'] = df['data_creazione'].apply(lambda x: x.strftime('%d/%m/%Y'))
+            df['Ora creazione'] = df['data_creazione'].apply(lambda x: x.strftime('%H:%M:%S'))
+            print(df[['Nome', 'Data creazione', 'Ora creazione']])
+        else:
+            print("*--- Nessun campionato presente")
+            self.comandi = {self.comando_chiusura: 'Esci'}
+        while True:
+            comando = self.seleziona_comando()
+            if comando == self.comando_chiusura:
+                break
+            self.agisci(comando)
